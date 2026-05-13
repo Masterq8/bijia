@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skzh.map.mapper.DataInfoMapper">
+    <resultMap type="DataInfo" id="PilotInfoResult">
+    </resultMap>
+
+    <sql id="selectDataInfoVo">
+        select menuId, title, parentId from data_type
+    </sql>
+
+
+    <select id="selectDataInfoListByType" resultType="com.skzh.map.domain.DataInfo">
+        select dict_code as id,dict_code as `value`,dict_label as label,dict_value as dictValue from sys_dict_data
+        where
+            dict_type =
+            #{dictType} order by dict_sort
+    </select>
+
+
+</mapper>

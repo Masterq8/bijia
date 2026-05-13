@@ -1,0 +1,37 @@
+{
+  "id": "4667883",
+  "name": "icon-ali",
+  "font_family": "iconfont-zr",
+  "css_prefix_text": "icon-zr",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "301424",
+      "name": "详情",
+      "font_class": "xiangqing",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "2076310",
+      "name": " 详情",
+      "font_class": "xiangqing1",
+      "unicode": "e8a0",
+      "unicode_decimal": 59552
+    },
+    {
+      "icon_id": "26697414",
+      "name": "眼睛-开_1",
+      "font_class": "yanjing-kai_1",
+      "unicode": "e797",
+      "unicode_decimal": 59287
+    },
+    {
+      "icon_id": "826165",
+      "name": "下载",
+      "font_class": "xiazai",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    }
+  ]
+}

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skzh.order.mapper.OrderManagementMapper">
+
+    <resultMap type="OrderManagement" id="orderManagementResult">
+        <result property="id" column="id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="orderDetail" column="order_detail"/>
+        <result property="price" column="price"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="image" column="image"/>
+        <result property="isShow" column="is_show"/>
+        <result property="title" column="title"/>
+        <result property="prodId" column="prod_id"/>
+        <result property="category" column="category"/>
+        <result property="state" column="state"/>
+        <result property="account" column="account"/>
+        <result property="satelliteType" column="satellite_type"/>
+        <result property="sensorType" column="sensor_type"/>
+
+        <result property="filepath" column="filepath"/>
+        <result property="thumbnail" column="thumbnail"/>
+        <result property="mapid" column="mapid"/>
+        <result property="rawfile" column="rawfile"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <sql id="selectorderManagementVo">
+        select id,
+               order_name,
+               order_detail,
+               price,
+               order_time,
+               create_time,
+               create_by,
+               order_number,
+               update_time,
+               update_by,
+               image,
+               is_show,
+               title,
+               prod_id,
+               category,
+               state,
+               satellite_type,
+               user_id,
+               account,
+               filepath,
+               ywid,
+               thumbnail,
+               mapid,
+               rawfile,
+               type,
+               sensor_type
+        from orders
+    </sql>
+
+    <select id="selectorderManagementList" parameterType="OrderManagement" resultMap="orderManagementResult">
+        select id,
+        order_name,
+        order_detail,
+        price,
+        order_time,
+        create_time,
+        create_by,
+        order_number,
+        update_time,
+        update_by,
+        image,
+        is_show,
+        title,
+        prod_id,
+        category,
+        state,
+        satellite_type,
+        user_id,
+        account,
+        filepath,
+        ywid,
+        thumbnail,
+        mapid,
+        rawfile,
+        type,
+        sensor_type,
+        case when state = '1' then '已完成' when state = '2' then '生成失败' else '生成中' end as stateName
+        from orders
+        <where>
+            <if test="userId != null">
+                and `user_id` = #{userId}
+            </if>
+            <if test="orderNumber != null">
+                and `order_number` like concat('%', #{orderNumber}, '%')
+            </if>
+            <if test="state != null">
+                and `state` = #{state}
+            </if>
+            <if test="category != null">
+                and `category` = #{category}
+            </if>
+            <if test="orderName != null">
+                and `order_name` like concat('%', #{orderName},'%')
+            </if>
+        </where>
+        order by order_time desc
+    </select>
+
+    <select id="selectorderManagementById" parameterType="Long"
+            resultMap="orderManagementResult">
+        <include refid="selectorderManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectorderManagementLists" resultType="OrderManagement" resultMap="orderManagementResult">
+        <include refid="selectorderManagementVo"/>
+        <where>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND order_number like concat('%', #{orderNumber}, '%')
+            </if>
+            <if test="orderName != null and orderName != ''">
+                AND order_name like concat('%', #{orderName}, '%')
+            </if>
+            <if test="state != null and state != ''">
+                AND state like concat('%', #{state}, '%')
+            </if>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="isShow != null and isShow != ''">
+                AND is_show = #{isShow}
+            </if>
+        </where>
+        order by order_time desc
+    </select>
+
+    <select id="selectorderManagementListByIds" resultMap="orderManagementResult">
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                <include refid="selectorderManagementVo"/>
+                WHERE id IN
+                <foreach item="id" collection="ids" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                <include refid="selectorderManagementVo"/>
+                WHERE 1=1
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insertorderManagement" parameterType="OrderManagement">
+        insert into orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,
+            </if>
+            <if test="orderName != null">order_name,
+            </if>
+            <if test="orderNumber != null">order_number,
+            </if>
+            <if test="orderDetail != null">order_detail,
+            </if>
+            <if test="price != null">price,
+            </if>
+            <if test="orderTime != null">order_time,
+            </if>
+            <if test="createTime != null">create_time,
+            </if>
+            <if test="createBy != null">create_by,
+            </if>
+            <if test="updateTime != null">update_time,
+            </if>
+            <if test="updateBy != null">update_by,
+            </if>
+            <if test="image != null">image,
+            </if>
+            <if test="isShow != null">is_show,
+            </if>
+            <if test="title != null">title,
+            </if>
+            <if test="prodId != null">prod_id,
+            </if>
+            <if test="category != null">category,
+            </if>
+            <if test="state != null">state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},
+            </if>
+            <if test="orderName != null">#{orderName},
+            </if>
+            <if test="orderNumber != null">#{orderNumber},
+            </if>
+            <if test="orderDetail != null">#{orderDetail},
+            </if>
+            <if test="price != null">#{price},
+            </if>
+            <if test="orderTime != null">#{orderTime},
+            </if>
+            <if test="createTime != null">#{createTime},
+            </if>
+            <if test="createBy != null">#{createBy},
+            </if>
+            <if test="updateTime != null">#{updateTime},
+            </if>
+            <if test="updateBy != null">#{updateBy},
+            </if>
+            <if test="image != null">#{image},
+            </if>
+            <if test="isShow != null">#{isShow},
+            </if>
+            <if test="title != null">#{title},
+            </if>
+            <if test="prodId != null">#{prodId},
+            </if>
+            <if test="category != null">#{category},
+            </if>
+            <if test="state != null">#{state},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateorderManagement" parameterType="OrderManagement">
+        update orders
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderName != null">order_name =
+                #{orderName},
+            </if>
+            <if test="orderNumber != null">order_number =
+                #{orderNumber},
+            </if>
+            <if test="orderDetail != null">order_detail =
+                #{orderDetail},
+            </if>
+            <if test="price != null">price =
+                #{price},
+            </if>
+            <if test="orderTime != null">order_time =
+                #{orderTime},
+            </if>
+            <if test="createTime != null">create_time =
+                #{createTime},
+            </if>
+            <if test="createBy != null">create_by =
+                #{createBy},
+            </if>
+            <if test="updateTime != null">update_time =
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">update_by =
+                #{updateBy},
+            </if>
+            <if test="image != null">image =
+                #{image},
+            </if>
+            <if test="isShow != null">is_show =
+                #{isShow},
+            </if>
+            <if test="title != null">title =
+                #{title},
+            </if>
+            <if test="prodId != null">prod_id =
+                #{prodId},
+            </if>
+            <if test="category != null">category =
+                #{category},
+            </if>
+            <if test="state != null">state =
+                #{state},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteorderManagementById" parameterType="Long">
+        delete
+        from orders
+        where id
+                  =
+              #{id}
+    </delete>
+
+    <delete id="deleteorderManagementByIds" parameterType="String">
+        delete from orders where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="addMake" parameterType="com.skzh.order.domain.OrderManagement">
+        insert into orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,
+            </if>
+            <if test="orderName != null">order_name,
+            </if>
+            <if test="orderNumber != null">order_number,
+            </if>
+            <if test="orderDetail != null">order_detail,
+            </if>
+            <if test="price != null">price,
+            </if>
+            <if test="userId != null">user_id,
+            </if>
+            <if test="orderTime != null">order_time,
+            </if>
+            <if test="createTime != null">create_time,
+            </if>
+            <if test="createBy != null">create_by,
+            </if>
+            <if test="updateTime != null">update_time,
+            </if>
+            <if test="updateBy != null">update_by,
+            </if>
+            <if test="image != null">image,
+            </if>
+            <if test="isShow != null">is_show,
+            </if>
+            <if test="prodId != null">prod_id,
+            </if>
+            <if test="category != null">category,
+            </if>
+            <if test="state != null">state,
+            </if>
+            <if test="filepath != null">filepath,
+            </if>
+            <if test="thumbnail != null">thumbnail,
+            </if>
+            <if test="mapid != null">mapid,
+            </if>
+            <if test="account != null">account,
+            </if>
+            <if test="imageName != null">title,
+            </if>
+            <if test="imageCategory != null">type,
+            </if>
+            <if test="sensorType != null">sensor_type,
+            </if>
+            <if test="satelliteType != null">satellite_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},
+            </if>
+            <if test="orderName != null">#{orderName},
+            </if>
+            <if test="orderNumber != null">#{orderNumber},
+            </if>
+            <if test="orderDetail != null">#{orderDetail},
+            </if>
+            <if test="price != null">#{price},
+            </if>
+            <if test="userId != null">#{userId},
+            </if>
+            <if test="orderTime != null">#{orderTime},
+            </if>
+            <if test="createTime != null">#{createTime},
+            </if>
+            <if test="createBy != null">#{createBy},
+            </if>
+            <if test="updateTime != null">#{updateTime},
+            </if>
+            <if test="updateBy != null">#{updateBy},
+            </if>
+            <if test="image != null">#{image},
+            </if>
+            <if test="isShow != null">#{isShow},
+            </if>
+            <if test="prodId != null">#{prodId},
+            </if>
+            <if test="category != null">#{category},
+            </if>
+            <if test="state != null">#{state},
+            </if>
+            <if test="filepath != null">#{filepath},
+            </if>
+            <if test="thumbnail != null">#{thumbnail},
+            </if>
+            <if test="mapid != null">#{mapid},
+            </if>
+            <if test="account != null">#{account},
+            </if>
+            <if test="imageName != null">#{imageName},
+            </if>
+            <if test="imageCategory != null">#{imageCategory},
+            </if>
+            <if test="sensorType != null">#{sensorType},
+            </if>
+            <if test="satelliteType != null">#{satelliteType},
+            </if>
+        </trim>
+    </insert>
+</mapper>

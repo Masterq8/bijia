@@ -1,0 +1,13 @@
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\util\GenUtils.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\domain\GenTable.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\service\GenTableServiceImpl.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\service\IGenTableService.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\service\IGenTableColumnService.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\mapper\GenTableColumnMapper.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\service\GenTableColumnServiceImpl.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\config\GenConfig.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\domain\GenTableColumn.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\mapper\GenTableMapper.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\util\VelocityUtils.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\controller\GenController.java
+F:\VScodeProject\bi-jia-net\BackEnd\skzh\skzh-generator\src\main\java\com\skzh\generator\util\VelocityInitializer.java

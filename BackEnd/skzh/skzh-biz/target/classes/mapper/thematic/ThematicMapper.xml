@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skzh.thematic.mapper.ThematicMapper">
+
+    <resultMap type="com.skzh.thematic.domain.Thematic" id="thematic">
+        <result property="id" column="id"/>
+        <!--               专题图                 -->
+        <result property="image" column="image"/>
+        <!--            专题图名称                         -->
+        <result property="imageName" column="imageName"/>
+        <!--               专题图类型                 -->
+        <result property="imageCategory" column="imageCategory"/>
+        <result property="categoryCode" column="category_code"/>
+        <!--            专题图备注信息                        -->
+        <result property="remarksInformation" column="remarksInformation"/>
+        <!--        创建人                 -->
+        <result property="createBy" column="createBy"/>
+        <!--        创建时间             -->
+        <result property="createTime" column="createTime"/>
+    </resultMap>
+
+
+    <select id="getThematic" resultMap="thematic">
+        select id, imageCategory, image, imageName, createTime, createBy, category_code
+         from
+            thematic_map_type_map
+        <where>
+            <if test="imageCategory != null and imageCategory != ''">
+                imageCategory like concat('%', #{imageCategory}, '%')
+            </if>
+        </where>
+        order by createTime
+    </select>
+
+    <select id="imageTypeGet" resultMap="thematic">
+        select a.image, a.imageCategory, a.id, a.category_code
+        from thematic_map_type_map a
+        order by createTime
+    </select>
+
+    <select id="DeleteArticle" resultMap="thematic">
+        delete
+        from thematic_map_type_map
+        WHERE id = #{id}
+    </select>
+    <insert id="addThematicMap" parameterType="com.skzh.thematic.domain.Thematic" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO thematic_map_type_map (image, imageCategory, category_code, createTime, createBy)
+        VALUES (#{image}, #{imageCategory}, #{categoryCode}, #{createTime}, #{createBy})
+    </insert>
+
+    <select id="getMake" resultMap="thematic">
+        select a.image
+        from thematic_map_type_map a
+        where a.id = #{imageCategory}
+    </select>
+
+    <update id="updateThematicMap">
+        update thematic_map_type_map
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryCode != null">category_code =
+                #{categoryCode},
+            </if>
+            <if test="image != null">image =
+                #{image},
+            </if>
+            <if test="imageCategory != null">imageCategory =
+                #{imageCategory},
+            </if>
+            <if test="createBy != null">createBy =
+                #{createBy},
+            </if>
+            <if test="createTime != null">createTime =
+                #{createTime},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="selectInfoById" resultMap="thematic">
+        select id, imageCategory, image, imageName, createTime, createBy, category_code
+        from thematic_map_type_map
+        where id = #{id}
+    </select>
+
+    <select id="selectInfoByCode" resultMap="thematic">
+        select id, imageCategory, image, imageName, createTime, createBy, category_code
+        from thematic_map_type_map
+        where category_code = #{code}
+    </select>
+
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skzh.order.mapper.OrderInfoMapper">
+    <resultMap type="OrderInfo" id="OrderInfoResult">
+        <result property="id" column="id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="price" column="price"/>
+        <result property="orderDetail" column="order_detail"/>
+        <result property="image" column="image"/>
+        <result property="isShow" column="is_show"/>
+        <result property="title" column="title"/>
+        <result property="prodId" column="prod_id"/>
+        <result property="category" column="category"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="satelliteType" column="satellite_type"/>
+        <result property="account" column="account"/>
+        <result property="ywid" column="ywid"/>
+        <result property="filepath" column="filepath"/>
+        <result property="thumbnail" column="thumbnail"/>
+        <result property="mapid" column="mapid"/>
+        <result property="rawfile" column="rawfile"/>
+        <result property="type" column="type"/>
+        <result property="state" column="state"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="userId" column="user_id"/>
+        <result property="shpurl" column="shpurl"/>
+    </resultMap>
+
+    <sql id="selectOrderInfoVo">
+        SELECT
+            id,
+            order_name,
+            order_time,
+            price,
+            order_detail,
+            image,
+            is_show,
+            title,
+            prod_id,
+            category,
+            create_by,
+            create_time,
+            update_by,
+            update_time,
+            satellite_type,
+            `account`,
+            ywid,
+            filepath,
+            thumbnail,
+            mapid,
+            rawfile,
+            type,
+            state,
+            order_number,
+            user_id,
+            shpurl
+        FROM orders
+    </sql>
+
+    <select id="selectOrderInfoList" parameterType="OrderInfo" resultMap="OrderInfoResult">
+        <include refid="selectOrderInfoVo"/>
+        <where>
+            is_show = 1
+            <if test="type != null">
+                AND type like concat('%', #{type}, '%')
+            </if>
+        </where>
+        order by order_time desc
+    </select>
+
+    <select id="listMain" resultType="java.util.Map">
+        SELECT satellite_type as satelliteType, COUNT(*) as `number`
+        FROM orders
+        GROUP BY satellite_type
+        HAVING COUNT(*) >=1
+        order by `number` desc
+    </select>
+
+    <select id="getOrderById" resultMap="OrderInfoResult">
+        <include refid="selectOrderInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <update id="updateIsShow">
+        update orders set is_show = #{isShow} where id = #{id}
+    </update>
+
+    <insert id="addpurchase" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (account, order_number, order_name, order_detail, prod_id, price, category, mapid, order_time,user_id,shpurl)
+        VALUES (#{account}, #{orderNumber}, #{orderName}, #{orderDetail}, #{prodId}, #{price}, #{category}, #{mapid}, #{orderTime},#{userId},#{shpurl})
+    </insert>
+
+    <!--    UPDATE purchase SET state=?,filePath=?,thumbnail=?,rawFile=? WHERE account=? AND id=?-->
+    <update id="updateById1">
+        UPDATE orders SET prod_id=#{entity.prodId},filepath=#{entity.filepath},thumbnail=#{entity.thumbnail},rawfile=#{entity.rawfile},state=1
+        WHERE order_number=#{entity.orderNumber}
+
+    </update>
+
+
+    <!--'UPDATE purchase SET state=? WHERE account=? AND id=?-->
+    <update id="updateById2">
+        UPDATE orders SET prod_id=#{entity.prodId}
+        WHERE order_number=#{entity.orderNumber}
+    </update>
+
+
+
+</mapper>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skzh.map.mapper.SatelliteMapper">
+
+    <resultMap type="Satellite" id="SatelliteResult">
+        <result property="id" column="id"/>
+        <result property="region" column="region"/>
+        <result property="viewPath" column="view_path"/>
+        <result property="viewRow" column="view_row"/>
+        <result property="starPath" column="star_path"/>
+        <result property="starRow" column="star_row"/>
+        <result property="leftupLongitude" column="leftup_longitude"/>
+        <result property="leftupLatitude" column="leftup_latitude"/>
+        <result property="leftdownLongitude" column="leftdown_longitude"/>
+        <result property="leftdownLatitude" column="leftdown_latitude"/>
+        <result property="rightupLongitude" column="rightup_longitude"/>
+        <result property="rightupLatitude" column="rightup_latitude"/>
+        <result property="rightdownLongitude" column="rightdown_longitude"/>
+        <result property="rightdownLatitude" column="rightdown_latitude"/>
+        <result property="sensorType" column="sensor_type"/>
+        <result property="satelliteType" column="satellite_type"/>
+        <result property="image" column="image"/>
+        <result property="collectTime" column="collect_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="starttime" column="starttime"/>
+        <result property="endtime" column="endtime"/>
+        <result property="acquisitiontime" column="acquisitiontime"/>
+        <result property="receivedtime" column="receivedtime"/>
+        <result property="centerlatitude" column="centerlatitude"/>
+        <result property="centerlongitude" column="centerlongitude"/>
+        <result property="orbitid" column="orbitid"/>
+        <result property="sourcefilepath" column="sourcefilepath"/>
+        <result property="sourcefilename" column="sourcefilename"/>
+        <result property="resolution" column="resolution"/>
+        <result property="title" column="title"/>
+        <result property="exInfo" column="ex_info"/>
+    </resultMap>
+
+    <sql id="selectSatelliteVo">
+        select id, region, view_path, view_row, star_path, star_row, leftup_longitude, leftup_latitude, leftdown_longitude,
+           leftdown_latitude, rightup_longitude, rightup_latitude, rightdown_longitude, rightdown_latitude, sensor_type,
+           satellite_type, image, collect_time, create_by, create_time, update_by, update_time, province, city,
+           starttime, endtime, acquisitiontime, receivedtime, centerlatitude, centerlongitude, orbitid, sourcefilepath,
+           sourcefilename, resolution, title, ex_info
+        from satellite
+    </sql>
+
+    <select id="selectSatelliteList" parameterType="Satellite" resultMap="SatelliteResult">
+        <include refid="selectSatelliteVo"/>
+        <where>
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="region != null  and region != ''">
+                and region = #{region}
+            </if>
+            <if test="viewPath != null ">
+                and view_path = #{viewPath}
+            </if>
+            <if test="viewRow != null ">
+                and view_row = #{viewRow}
+            </if>
+            <if test="starPath != null ">
+                and star_path = #{starPath}
+            </if>
+            <if test="starRow != null ">
+                and star_row = #{starRow}
+            </if>
+            <if test="leftupLongitude != null ">
+                and leftup_longitude = #{leftupLongitude}
+            </if>
+            <if test="leftupLatitude != null ">
+                and leftup_latitude = #{leftupLatitude}
+            </if>
+            <if test="leftdownLongitude != null ">
+                and leftdown_longitude = #{leftdownLongitude}
+            </if>
+            <if test="leftdownLatitude != null ">
+                and leftdown_latitude = #{leftdownLatitude}
+            </if>
+            <if test="rightupLongitude != null ">
+                and rightup_longitude = #{rightupLongitude}
+            </if>
+            <if test="rightupLatitude != null ">
+                and rightup_latitude = #{rightupLatitude}
+            </if>
+            <if test="rightdownLongitude != null ">
+                and rightdown_longitude = #{rightdownLongitude}
+            </if>
+            <if test="rightdownLatitude != null ">
+                and rightdown_latitude = #{rightdownLatitude}
+            </if>
+            <if test="sensorType != null  and sensorType != ''">
+                and sensor_type like concat('%', #{sensorType},'%')
+            </if>
+            <if test="satelliteType != null  and satelliteType != ''">
+                and satellite_type = #{satelliteType}
+            </if>
+            <if test="image != null  and image != ''">
+                and image = #{image}
+            </if>
+            <if test="collectTime != null ">
+                and collect_time = #{collectTime}
+            </if>
+            <if test="province != null and province != ''">
+                 and province like concat('%', #{province}, '%')
+            </if>
+            <if test="city!= null and city != ''">
+                and city like concat('%', #{city}, '%')
+            </if>
+        </where>
+        order by collect_time desc, create_time desc
+    </select>
+
+    <select id="selectSatelliteById" parameterType="Long"
+        resultMap="SatelliteResult">
+        <include refid="selectSatelliteVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSatellite" parameterType="Satellite" useGeneratedKeys="true" keyProperty="id">
+        insert into satellite
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="region != null and region != ''">region,</if>
+            <if test="viewPath != null">view_path,</if>
+            <if test="viewRow != null">view_row,</if>
+            <if test="starPath != null">star_path,</if>
+            <if test="starRow != null">star_row,</if>
+            <if test="leftupLongitude != null">leftup_longitude,</if>
+            <if test="leftupLatitude != null">leftup_latitude,</if>
+            <if test="leftdownLongitude != null">leftdown_longitude,</if>
+            <if test="leftdownLatitude != null">leftdown_latitude,</if>
+            <if test="rightupLongitude != null">rightup_longitude,</if>
+            <if test="rightupLatitude != null">rightup_latitude,</if>
+            <if test="rightdownLongitude != null">rightdown_longitude,</if>
+            <if test="rightdownLatitude != null">rightdown_latitude,</if>
+            <if test="sensorType != null and sensorType != ''">sensor_type,</if>
+            <if test="satelliteType != null and satelliteType != ''">satellite_type,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="collectTime != null">collect_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="province != null and province != ''">province,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="starttime != null">starttime,</if>
+            <if test="endtime != null">endtime,</if>
+            <if test="acquisitiontime != null and acquisitiontime != ''">acquisitiontime, </if>
+            <if test="receivedtime != null and receivedtime != ''">receivedtime, </if>
+            <if test="centerlatitude != null and centerlatitude != ''">centerlatitude, </if>
+            <if test="centerlongitude != null and centerlongitude != ''">centerlongitude, </if>
+            <if test="orbitid != null and orbitid != ''">orbitid, </if>
+            <if test="sourcefilepath != null and sourcefilepath != ''">sourcefilepath, </if>
+            <if test="sourcefilename != null and sourcefilename != ''">sourcefilename, </if>
+            <if test="resolution != null and resolution != ''">resolution, </if>
+            <if test="title != null and title != ''">title, </if>
+            <if test="exInfo != null and exInfo != ''">ex_info, </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="region != null and region != ''">#{region},</if>
+            <if test="viewPath != null">#{viewPath},</if>
+            <if test="viewRow != null">#{viewRow},</if>
+            <if test="starPath != null">#{starPath},</if>
+            <if test="starRow != null">#{starRow},</if>
+            <if test="leftupLongitude != null">#{leftupLongitude},</if>
+            <if test="leftupLatitude != null">#{leftupLatitude},</if>
+            <if test="leftdownLongitude != null">#{leftdownLongitude},</if>
+            <if test="leftdownLatitude != null">#{leftdownLatitude},</if>
+            <if test="rightupLongitude != null">#{rightupLongitude},</if>
+            <if test="rightupLatitude != null">#{rightupLatitude},</if>
+            <if test="rightdownLongitude != null">#{rightdownLongitude},</if>
+            <if test="rightdownLatitude != null">#{rightdownLatitude},</if>
+            <if test="sensorType != null and sensorType != ''">#{sensorType},</if>
+            <if test="satelliteType != null and satelliteType != ''">#{satelliteType},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="collectTime != null">#{collectTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="province != null and province != ''">#{province},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="starttime != null">#{starttime},</if>
+            <if test="endtime != null">#{endtime},</if>
+            <if test="acquisitiontime != null and acquisitiontime != ''">#{acquisitiontime},</if>
+            <if test="receivedtime != null and receivedtime != ''">#{receivedtime},</if>
+            <if test="centerlatitude != null and centerlatitude != ''">#{centerlatitude},</if>
+            <if test="centerlongitude != null and centerlongitude != ''">#{centerlongitude},</if>
+            <if test="orbitid != null and orbitid != ''">#{orbitid},</if>
+            <if test="sourcefilepath != null and sourcefilepath != ''">#{sourcefilepath},</if>
+            <if test="sourcefilename != null and sourcefilename != ''">#{sourcefilename},</if>
+            <if test="resolution != null and resolution != ''">#{resolution},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="exInfo != null and exInfo != ''">#{exInfo},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSatellite" parameterType="Satellite">
+        update satellite
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="region != null and region != ''">region = #{region},</if>
+            <if test="viewPath != null">view_path = #{viewPath},</if>
+            <if test="viewRow != null">view_row = #{viewRow},</if>
+            <if test="starPath != null">star_path = #{starPath},</if>
+            <if test="starRow != null">star_row = #{starRow},</if>
+            <if test="leftupLongitude != null">leftup_longitude = #{leftupLongitude},</if>
+            <if test="leftupLatitude != null">leftup_latitude = #{leftupLatitude},</if>
+            <if test="leftdownLongitude != null">leftdown_longitude = #{leftdownLongitude},</if>
+            <if test="leftdownLatitude != null">leftdown_latitude = #{leftdownLatitude},</if>
+            <if test="rightupLongitude != null">rightup_longitude = #{rightupLongitude},</if>
+            <if test="rightupLatitude != null">rightup_latitude = #{rightupLatitude},</if>
+            <if test="rightdownLongitude != null">rightdown_longitude = #{rightdownLongitude},</if>
+            <if test="rightdownLatitude != null">rightdown_latitude = #{rightdownLatitude},</if>
+            <if test="sensorType != null and sensorType != ''">sensor_type = #{sensorType},</if>
+            <if test="satelliteType != null and satelliteType != ''">satellite_type = #{satelliteType},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="collectTime != null">collect_time = #{collectTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="starttime != null">starttime = #{starttime},</if>
+            <if test="endtime != null">endtime = #{endtime},</if>
+            <if test="acquisitiontime != null">acquisitiontime = #{acquisitiontime},</if>
+            <if test="receivedtime != null">receivedtime = #{receivedtime},</if>
+            <if test="centerlatitude != null">centerlatitude = #{centerlatitude},</if>
+            <if test="centerlongitude != null">centerlongitude = #{centerlongitude},</if>
+            <if test="orbitid != null">orbitid = #{orbitid},</if>
+            <if test="sourcefilepath != null">sourcefilepath = #{sourcefilepath},</if>
+            <if test="sourcefilename != null">sourcefilename = #{sourcefilename},</if>
+            <if test="resolution != null">resolution = #{resolution},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="exInfo != null">ex_info = #{exInfo},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSatelliteById" parameterType="Long">
+        delete from satellite where id = #{id}
+    </delete>
+
+    <delete id="deleteSatelliteByIds" parameterType="String">
+        delete from satellite where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getListInIds" resultMap="SatelliteResult">
+        select id, region, view_path, view_row, star_path, star_row, leftup_longitude, leftup_latitude, leftdown_longitude,
+            leftdown_latitude, rightup_longitude, rightup_latitude, rightdown_longitude, rightdown_latitude, sensor_type,
+            satellite_type, image, collect_time, create_by, create_time, update_by, update_time, province, city,
+            starttime, endtime, acquisitiontime, receivedtime, centerlatitude, centerlongitude, orbitid, sourcefilepath,
+            sourcefilename, resolution, title, ex_info
+        from satellite
+        where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+<!--    <select id="selectSatelliteList1" resultType="com.skzh.map.domain.Satellite">-->
+<!--        SELECT * FROM satellite-->
+<!--        WHERE 1=1-->
+<!--        &lt;!&ndash; 根据省市信息进行过滤 &ndash;&gt;-->
+<!--        <if test="province != null and province != ''">-->
+<!--            and province = #{province}-->
+<!--        </if>-->
+<!--        <if test="city!= null and city != ''">-->
+<!--            and city = #{city}-->
+<!--        </if>-->
+<!--        &lt;!&ndash; 根据卫星类型信息进行过滤 &ndash;&gt;-->
+<!--        <if test="satelliteTypes != null and satelliteTypes.size() > 0">-->
+<!--            AND satellite_type IN-->
+<!--            <foreach item="type" index="index" collection="satelliteTypes" open="(" separator="," close=")">-->
+<!--                #{type}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--    </select>-->
+    <select id="selectSatelliteList1" parameterType="Satellite" resultMap="SatelliteResult">
+        <include refid="selectSatelliteVo"/>
+        <where>
+            <if test="province != null and province != ''">
+                and province = #{province}
+            </if>
+            <if test="city!= null and city != ''">
+                and city = #{city}
+            </if>
+            <!-- 根据卫星类型信息进行过滤 -->
+            <if test="satelliteTypes != null and satelliteTypes.size() > 0">
+                AND satellite_type IN
+                <foreach item="type" index="index" collection="satelliteTypes" open="(" separator="," close=")">
+                    #{type}
+                </foreach>
+            </if>
+            <!-- 添加日期范围过滤 -->
+            <if test="startCollectTime != null">
+                AND collect_time >= #{startCollectTime}
+            </if>
+            <if test="endCollectTime != null">
+                AND collect_time &lt;= #{endCollectTime}
+            </if>
+        </where>
+        order by collect_time desc, create_time desc
+    </select>
+
+    <update id="updateCenterPoint">
+        update satellite set centerlatitude = #{centerLat}, centerlongitude = #{centerLng} where id = #{id}
+    </update>
+</mapper>
