@@ -1,0 +1,13 @@
+com\skzh\generator\service\IGenTableColumnService.class
+com\skzh\generator\domain\GenTableColumn.class
+com\skzh\generator\service\GenTableColumnServiceImpl.class
+com\skzh\generator\mapper\GenTableColumnMapper.class
+com\skzh\generator\util\VelocityInitializer.class
+com\skzh\generator\mapper\GenTableMapper.class
+com\skzh\generator\util\GenUtils.class
+com\skzh\generator\domain\GenTable.class
+com\skzh\generator\util\VelocityUtils.class
+com\skzh\generator\service\GenTableServiceImpl.class
+com\skzh\generator\config\GenConfig.class
+com\skzh\generator\controller\GenController.class
+com\skzh\generator\service\IGenTableService.class

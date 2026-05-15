@@ -155,11 +155,17 @@ const initMap = () => {
         document.getElementById('floating-popup').style.display = 'none';
     };
 
+  // 获取Element Plus主题色
+  const getPrimaryColor = () => {
+    return getComputedStyle(document.documentElement).getPropertyValue('--el-color-primary').trim() || '#409EFF';
+  };
+
   // 设置绘制多边形样式
   map.value.pm.setPathOptions({
-    color: "pink",    //路径颜色
-    fillColor: "dodgerblue",  //填充颜色为闪蓝
-    fillOpacity: 0.2, //透明度，1为完全不透明
+    color: getPrimaryColor(),    //路径颜色，使用主题色
+    weight: 2,                   //边框粗细统一为2px
+    fillColor: getPrimaryColor(),
+    fillOpacity: 0.18,           //透明度
   });
 
 
@@ -225,15 +231,17 @@ const drawRectangle = () =>{
 const addGeoJsonLayer = (geojson) => {
   if (!map.value || !geojson) return false;
   let firstPolygonLayer = null;
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--el-color-primary').trim() || '#409EFF';
+  
   const geoLayer = L.geoJSON(geojson, {
     filter: (feature) => {
       const type = feature?.geometry?.type;
       return type === "Polygon" || type === "MultiPolygon";
     },
     style: {
-      color: "#4f7df3",
+      color: primaryColor,
       weight: 2,
-      fillColor: "#60a5fa",
+      fillColor: primaryColor,
       fillOpacity: 0.18
     },
     onEachFeature: (feature, layer) => {
@@ -270,13 +278,7 @@ const imageArr = ref([])
 
 //添加多边形
 const addPolygon = (points, imageUrl, id,data) => {
-
-  /* const latlngs = [
-    [points.TopLeftLatitude, points.TopLeftLongitude],
-    [points.TopRightLatitude, points.TopRightLongitude],
-    [points.BottomRightLatitude, points.BottomRightLongitude],
-    [points.BottomLeftLatitude, points.BottomLeftLongitude]
-  ]; */
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--el-color-primary').trim() || '#409EFF';
 
   const ke1 = Math.max(points.TopLeftLatitude, points.TopRightLatitude) // 纬度最大值
   const ke2 = Math.min(points.BottomLeftLongitude, points.TopLeftLongitude) // 经度最小值
@@ -290,8 +292,13 @@ const addPolygon = (points, imageUrl, id,data) => {
     [ke3,ke2],
   ]
 
-  // 创建多边形
-  const polygon = L.polygon(latlngs).addTo(map.value);
+  // 创建多边形，使用主题色和统一的2px边框
+  const polygon = L.polygon(latlngs, {
+    color: primaryColor,
+    weight: 2,
+    fillColor: primaryColor,
+    fillOpacity: 0.18
+  }).addTo(map.value);
   //.setIndex(1);
   polygon.id = id
   polygon.data = data;  //保存详细数据
@@ -429,6 +436,12 @@ const changePolygonColor = (id, color, fillColor) => {
 };
 
 // 暴露方法供父组件调用
+const resizeMap = () => {
+  if (map.value) {
+    map.value.invalidateSize();
+  }
+};
+
 defineExpose({
   drawPolygon,
   drawRectangle,
@@ -440,7 +453,8 @@ defineExpose({
   addPolygon,
   removeImage,
   changePolygonColor,
-  removeAllImage
+  removeAllImage,
+  resizeMap
 });
 
 onMounted(() => {

@@ -2,84 +2,6 @@
   <div class="home">
     <div class="app-content" v-show="showText">
 
-      <div v-show="showSearch" class="search-result">
-
-        <div class="search-text">
-          <svg @click="goBack()" viewBox="64 64 896 896" focusable="false" data-icon="arrow-left" width="1em"
-            height="1em" fill="#fff" aria-hidden="true" class="backIcon" style="font-size: large;">
-            <path
-              d="M872 474H286.9l350.2-304c5.6-4.9 2.2-14-5.2-14h-88.5c-3.9 0-7.6 1.4-10.5 3.9L155 487.8a31.96 31.96 0 000 48.3L535.1 866c1.5 1.3 3.3 2 5.2 2h91.5c7.4 0 10.8-9.2 5.2-14L286.9 550H872c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z">
-            </path>
-          </svg>
-          公开数据检索
-        </div>
-        <div class="data-list">
-          <div v-for="item in satelliteData" :key="item.id">
-            <div class="dataInfoList" @dblclick="navigateToCenter(item)" @mouseover="onMouseOver(item)"
-              @mouseleave="onMouseLeave(item)">
-              <!-- 生成卫星名、采集时间、传感器信息 -->
-              <div class="input_label_info">
-                <div class="input_label">
-                  <input type="checkbox" class="chBoxStyle" @click="imageshow(item)" :ref="`checkbox_${item.id}`"
-                    :value="item.id" v-model="checkboxStatus[item.id]">
-                  <label class="label_name" for="checkbox" style="margin-left: -70px">{{ item.satelliteType + "_" +
-                    item.region + "_" + formatCollectTime(item.collectTime) }}</label>
-                  <div class="right-buttons">
-                    <el-tooltip content="预览影像" placement="top" :show-after="300">
-                      <el-button class="iconfont-zr icon-zryanjing-kai_1" color="black" @click="handleViewImage(item)"></el-button>
-                    </el-tooltip>
-                    <el-tooltip content="查看详情" placement="top" :show-after="300">
-                      <el-button class="iconfont-zr icon-zrxiangqing" color="black" @click="viewDetails(item)"></el-button>
-                    </el-tooltip>
-                    <el-tooltip content="制作专题图" placement="top" :show-after="300">
-                      <el-button class="iconfont-zr icon-zrxiangqing1" color="black" @click="openThematicMap(item)"></el-button>
-                    </el-tooltip>
-                  </div>
-                </div>
-                <div class="infor">
-                  <img :src="item.image" class="littleImg" @click="viewDetails(item)">
-                  <div class="info_details_1">
-                    <div class="satellite">
-                      <span class="white">卫星: </span>
-                      <span class="satellite_name white">{{ item.satelliteType }}</span>
-                      <br>
-                      <span class="white">传感器: </span>
-                      <span class="sensor_value white">{{ item.sensorType }}</span>
-                    </div>
-                  </div>
-                  <div class="info_details_2">
-                    采集时间：
-                    <br />
-                    {{ item.collectTime }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="search-button">
-          <div class="search-box">
-            <el-pagination
-              v-model:current-page="queryParams.pageNum"
-              v-model:page-size="queryParams.pageSize"
-              :page-sizes="[10, 20, 30, 40]"
-              size="small"
-              :disabled="disabled"
-              :background="false"
-              layout="prev, pager, next,total, sizes"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
-            <div class="search-box__actions">
-              <el-button :disabled="!isAnalyzeAllowed" class="button-data" @click="handleAddDate()">加入我的数据</el-button>
-              <el-button :disabled="!isAnalyzeAllowed" @click="ProcessingAnalysis()" type="primary">处理分析</el-button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="panel-top">
         <div class="panel-title">遥感数据</div>
         <div class="panel-subtitle">{{ activePanel === 'search' ? '选择数据类型、检索范围与采集时间，快速定位海岸带遥感影像' : '上传本地影像数据，解压后自动加入我的数据并在地图中预览' }}</div>
@@ -241,11 +163,76 @@
       @click="toggleTextVisibility()" :style="`left:${realLeft}; `">
       <span>{{ showText ? '‹' : '›' }}</span>
     </button>
-    <div class="map-status" v-show="showText">
+    <!-- <div class="map-status" v-show="showText">
       <strong>当前检索：</strong>{{ querySummary }}
-    </div>
+    </div> -->
     <baseMap ref="mapDom" :style="`width:${realWidth};`" @getValue="getSonValue" @getSonValue1="getSonValue1"
       @getSonValue2="getSonValue2" @gave-lat-lng="handleAreaDrawn" />
+
+    <!-- 右侧边栏：搜索结果 -->
+    <div class="right-sidebar" v-show="showSearch">
+      <div class="right-sidebar-header">
+        <div class="right-sidebar-title">检索结果</div>
+        <div class="right-sidebar-subtitle">共找到 {{ total }} 条数据</div>
+      </div>
+      
+      <div class="right-sidebar-content">
+        <div v-for="item in satelliteData" :key="item.id" class="result-item">
+          <div class="result-item-header">
+            <input type="checkbox" class="result-checkbox" @click="imageshow(item)" :ref="`checkbox_${item.id}`"
+              :value="item.id" v-model="checkboxStatus[item.id]">
+            <span class="result-item-title">{{ item.satelliteType }}_{{ item.region }}_{{ formatCollectTime(item.collectTime) }}</span>
+          </div>
+          <div class="result-item-body" @dblclick="navigateToCenter(item)" @mouseover="onMouseOver(item)" @mouseleave="onMouseLeave(item)">
+            <img :src="item.image" class="result-item-img" @click="viewDetails(item)">
+            <div class="result-item-info">
+              <div class="info-row">
+                <span class="info-label">卫星:</span>
+                <span class="info-value">{{ item.satelliteType }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">传感器:</span>
+                <span class="info-value">{{ item.sensorType }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">采集时间:</span>
+                <span class="info-value">{{ item.collectTime }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="result-item-actions">
+            <el-button size="small" @click="handleViewImage(item)">预览</el-button>
+            <el-button size="small" @click="viewDetails(item)">详情</el-button>
+            <el-button size="small" @click="openThematicMap(item)">专题图</el-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-sidebar-footer">
+        <el-pagination
+          v-model:current-page="queryParams.pageNum"
+          v-model:page-size="queryParams.pageSize"
+          :page-sizes="[10, 20, 30, 40]"
+          size="small"
+          :disabled="disabled"
+          :background="false"
+          layout="prev, pager, next,total, sizes"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+        <div class="footer-actions">
+          <el-button :disabled="!isAnalyzeAllowed" @click="handleAddDate()">加入我的数据</el-button>
+          <el-button :disabled="!isAnalyzeAllowed" type="primary" @click="ProcessingAnalysis()">处理分析</el-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧边栏收起按钮 -->
+    <button type="button" class="right-sidebar-toggle" :class="{ collapsed: !showSearch }"
+      @click="toggleSearchVisibility()" :style="`right:${showSearch ? '320px' : '0px'};`">
+      <span>{{ showSearch ? '‹' : '›' }}</span>
+    </button>
 
     <!--卫星数据详情框-->
     <el-dialog :title="title" v-model="satelliteDetails" width="800px" height="600px" append-to-body
@@ -514,7 +501,20 @@ const toggleTextVisibility = () => {
   showText.value = !showText.value;
   // showSearch.value = true;
   // isShowPage.value = false;
+  nextTick(() => {
+    if (mapDom.value && mapDom.value.resizeMap) {
+      mapDom.value.resizeMap();
+    }
+  });
+};
 
+const toggleSearchVisibility = () => {
+  showSearch.value = !showSearch.value;
+  nextTick(() => {
+    if (mapDom.value && mapDom.value.resizeMap) {
+      mapDom.value.resizeMap();
+    }
+  });
 };
 
 const handleRadioChange = (value) => {
@@ -569,7 +569,16 @@ const openSelect = () => {
   }
 };
 
-const realWidth = computed(() => (showText.value ? "calc(100vw - 400px)" : "100vw"));
+const realWidth = computed(() => {
+  let width = "100vw";
+  if (showText.value) {
+    width = "calc(100vw - 400px)";
+  }
+  if (showSearch.value) {
+    width = showText.value ? "calc(100vw - 720px)" : "calc(100vw - 320px)";
+  }
+  return width;
+});
 
 const realLeft = computed(() => (showText.value ? "400px" : "0vw"));
 
@@ -599,7 +608,7 @@ const syncSelectedSatelliteTypesFromTree = () => {
   const checkedNodes = elTreeRef.value.getCheckedNodes(true, false) || [];
   selectedSatelliteTypes.value = Array.from(new Set(
       checkedNodes
-          .map(node => node.dictValue)
+          .map(node => node.label)
           .filter(value => value !== undefined && value !== null && value !== '')
   ));
 };
@@ -1136,10 +1145,28 @@ const navigateToCenterPoint = (centerPoint) =>{
 }
 
 
+function normalizeSatelliteType(type) {
+  if (!type) return type;
+  return type.replace(/^GF-0(\d)$/, 'GF$1');
+}
+
 function getMenuList() {
   getMenuInfoList().then((res) => {
     if (res.code == 200) {
-      data.value = res.data;
+      const menuData = res.data;
+      menuData.forEach(item => {
+        if (item.children) {
+          item.children.forEach(child => {
+            if (child.value) {
+              child.value = normalizeSatelliteType(child.value);
+            }
+            if (child.dictValue) {
+              child.dictValue = normalizeSatelliteType(child.dictValue);
+            }
+          });
+        }
+      });
+      data.value = menuData;
     }
   });
 }
@@ -1790,9 +1817,15 @@ getMenuList();
   width: 380px;
 }
 
-.el-pagination ::v-deep .el-select__wrapper.el-tooltip__trigger.el-tooltip__trigger{
-  background-color:#000000 !important;
-  border: 1px solid rgb(0, 0, 0);
+.el-pagination ::v-deep .el-select__wrapper.el-tooltip__trigger.el-tooltip__trigger {
+  background-color: #001529 !important;
+  border: 1px solid #5169a5;
+  width: 80px;
+}
+
+[data-theme="light"] .el-pagination ::v-deep .el-select__wrapper.el-tooltip__trigger.el-tooltip__trigger {
+  background-color: #ffffff !important;
+  border: 1px solid #94a3b8;
   width: 80px;
 }
 .el-pagination ::v-deep .el-select__selected-item.el-select__placeholder{
@@ -2444,10 +2477,9 @@ getMenuList();
 
 .sidebar-toggle {
   position: absolute;
-  top: 50%;
+  top: 24px;
   width: 32px;
   height: 58px;
-  transform: translateY(-50%);
   z-index: 9999;
   display: grid;
   place-items: center;
@@ -2458,13 +2490,11 @@ getMenuList();
   background: linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.92));
   box-shadow: 8px 0 24px rgba(2, 6, 23, 0.24);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-.sidebar-toggle span {
-  font-size: 30px;
-  line-height: 1;
-  transform: translateY(-1px);
+.sidebar-toggle.collapsed {
+  left: 0 !important;
 }
 
 .sidebar-toggle:hover {
@@ -2473,8 +2503,23 @@ getMenuList();
   background: linear-gradient(180deg, #2563eb, #38bdf8);
 }
 
-.sidebar-toggle.collapsed {
-  left: 0 !important;
+.sidebar-toggle span {
+  font-size: 30px;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* 浅色主题下的左侧边栏按钮样式 */
+[data-theme="light"] .sidebar-toggle {
+  border-color: #e2e8f0;
+  color: #475569;
+  background: #ffffff;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .sidebar-toggle:hover {
+  color: #ffffff;
+  background: linear-gradient(180deg, #2563eb, #38bdf8);
 }
 
 .upload-page-card {
@@ -2650,7 +2695,232 @@ getMenuList();
 
 .right-buttons .el-button {
   margin-left: 0;
-  margin-right: 0;
 }
 
+/* 右侧边栏样式 */
+.right-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100%;
+  background: linear-gradient(180deg, #1c1e21 0%, #0f172a 100%);
+  border-left: 1px solid #2d2f33;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.right-sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid #2d2f33;
+  background: rgba(31, 41, 55, 0.5);
+}
+
+.right-sidebar-title {
+  color: #e5edf8;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.right-sidebar-subtitle {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.right-sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.result-item {
+  background: rgba(31, 41, 55, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  transition: all 0.2s ease;
+}
+
+.result-item:hover {
+  background: rgba(31, 41, 55, 0.8);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.result-item-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.result-checkbox {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.result-item-title {
+  color: #e5edf8;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.result-item-body {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.result-item-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--el-color-primary);
+}
+
+.result-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-row {
+  display: flex;
+  font-size: 12px;
+}
+
+.info-label {
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.info-value {
+  color: #e5edf8;
+}
+
+.result-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.result-item-actions .el-button {
+  flex: 1;
+}
+
+.right-sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid #2d2f33;
+  background: rgba(31, 41, 55, 0.5);
+}
+
+.right-sidebar-footer .el-pagination {
+  margin-bottom: 10px;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.footer-actions .el-button {
+  flex: 1;
+}
+
+/* 右侧边栏收起按钮 */
+.right-sidebar-toggle {
+  position: absolute;
+  top: 24px;
+  width: 32px;
+  height: 58px;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-right: none;
+  border-radius: 18px 0 0 18px;
+  color: #e5edf8;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.92));
+  box-shadow: -8px 0 24px rgba(2, 6, 23, 0.24);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.right-sidebar-toggle.collapsed {
+  right: 0 !important;
+}
+
+.right-sidebar-toggle:hover {
+  width: 38px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #2563eb, #38bdf8);
+}
+
+.right-sidebar-toggle span {
+  font-size: 30px;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* 浅色主题下的右侧边栏样式 */
+[data-theme="light"] .right-sidebar {
+  background: #ffffff;
+  border-left-color: #e2e8f0;
+}
+
+[data-theme="light"] .right-sidebar-header {
+  background: #f8fafc;
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .right-sidebar-title {
+  color: #1e293b;
+}
+
+[data-theme="light"] .right-sidebar-subtitle {
+  color: #64748b;
+}
+
+[data-theme="light"] .result-item {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .result-item:hover {
+  background: #f1f5f9;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+[data-theme="light"] .result-item-title {
+  color: #374151;
+}
+
+[data-theme="light"] .info-label {
+  color: #64748b;
+}
+
+[data-theme="light"] .info-value {
+  color: #374151;
+}
+
+[data-theme="light"] .right-sidebar-footer {
+  background: #f8fafc;
+  border-top-color: #e2e8f0;
+}
+
+[data-theme="light"] .right-sidebar-toggle {
+  border-color: #e2e8f0;
+  color: #475569;
+  background: #ffffff;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .right-sidebar-toggle:hover {
+  color: #ffffff;
+  background: linear-gradient(180deg, #2563eb, #38bdf8);
+}
 </style>
