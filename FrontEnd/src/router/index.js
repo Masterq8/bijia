@@ -70,30 +70,35 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/home',
+    redirect: '/newHome',
     children: [
+      {
+        path: '/newHome',
+        component: () => import('@/views/newHome'),
+        name: 'NewHome',
+        meta: { title: '首页', icon: 'dashboard' }
+      },
       {
         path: '/home',
         component: () => import('@/views/Home'),
         name: 'Home',
         meta: { title: '笔架地图' }
-      }
-    ]
-  },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/aiProcess',
-    children: [
+      },
       {
         path: '/aiProcess',
         component: () => import('@/views/aiProcess'),
         name: 'aiProcess',
         meta: { title: 'AI工具' }
+      },
+      {
+        path: '/productionShow',
+        component: () => import('@/views/productionShow'),
+        name: 'productionShow',
+        meta: { title: '产品展示' }
       }
     ]
   },
-   {
+  {
     path: '/',
     //component: Layout,
      hidden: true,
@@ -103,18 +108,6 @@ export const constantRoutes = [
         component: () => import('@/views/quickStart'),
         name: 'quickStart',
         meta: { title: '快速上手', icon: 'user' }
-      }
-    ]
-  },
-  {
-    path: '/',
-    component: Layout,
-    children: [
-      {
-        path: '/productionShow',
-        component: () => import('@/views/productionShow'),
-        name: 'productionShow',
-        meta: { title: '产品展示' }
       }
     ]
   },
@@ -132,6 +125,7 @@ export const constantRoutes = [
       }
     ]
   },
+
   {
     path: '/user',
     component: Layout,

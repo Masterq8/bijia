@@ -1163,6 +1163,9 @@ function getMenuList() {
             if (child.dictValue) {
               child.dictValue = normalizeSatelliteType(child.dictValue);
             }
+            if (child.label) {
+              child.label = normalizeSatelliteType(child.label);
+            }
           });
         }
       });

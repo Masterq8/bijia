@@ -65,8 +65,13 @@ const topMenus = computed(() => {
     routers.value.map((menu) => {
       if (menu.hidden !== true) {
         // 兼容顶部栏一级菜单内部跳转
-        if (menu.path === "/") {
-            topMenus.push(menu.children[0]);
+        if (menu.path === "/" && menu.children) {
+            // 推送所有子路由
+            menu.children.forEach(child => {
+              if (child.hidden !== true) {
+                topMenus.push(child);
+              }
+            });
         } else {
             topMenus.push(menu);
         }
@@ -76,8 +81,13 @@ const topMenus = computed(() => {
     constantRoutes.map((menu) => {
       if (menu.hidden !== true) {
         // 兼容顶部栏一级菜单内部跳转
-        if (menu.path === "/") {
-            topMenus.push(menu.children[0]);
+        if (menu.path === "/" && menu.children) {
+            // 推送所有子路由
+            menu.children.forEach(child => {
+              if (child.hidden !== true) {
+                topMenus.push(child);
+              }
+            });
         } else {
             topMenus.push(menu);
         }

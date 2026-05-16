@@ -688,7 +688,7 @@ CREATE TABLE `sys_menu`  (
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 999, 'system', NULL, '', 1, 0, 'M', '0', '0', '', 'system', 'admin', '2024-04-08 14:00:13', 'admin', '2024-08-29 09:00:17', '系统管理目录');
+INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 999, 'system', NULL, '', 1, 0, 'M', '0', '0', '', '#', 'admin', '2024-04-08 14:00:13', 'admin', '2024-08-29 09:00:17', '系统管理目录');
 INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 200, 'monitor', NULL, '', 1, 0, 'M', '1', '0', '', 'monitor', 'admin', '2024-04-08 14:00:13', 'admin', '2024-08-29 09:00:06', '系统监控目录');
 INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 300, 'tool', NULL, '', 1, 0, 'M', '1', '0', '', 'tool', 'admin', '2024-04-08 14:00:13', 'admin', '2024-10-21 16:00:20', '系统工具目录');
 INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', '', 1, 0, 'C', '0', '0', 'system:user:list', 'user', 'admin', '2024-04-08 14:00:13', '', NULL, '用户管理菜单');

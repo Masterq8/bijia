@@ -139,7 +139,7 @@ function handleLogin() {
           return acc;
         }, {});
 
-        router.push({ path: redirect.value || "/home", query: otherQueryParams });
+        router.push({ path: redirect.value || "/newHome", query: otherQueryParams });
         // debugger
       }).catch(() => {
         loading.value = false;

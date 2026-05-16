@@ -276,32 +276,29 @@ const goToLatLng = (lat, lng) => {
 
 const imageArr = ref([])
 
-//添加多边形
-const addPolygon = (points, imageUrl, id,data) => {
-  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--el-color-primary').trim() || '#409EFF';
+const polygonLayers = ref([])
 
-  const ke1 = Math.max(points.TopLeftLatitude, points.TopRightLatitude) // 纬度最大值
-  const ke2 = Math.min(points.BottomLeftLongitude, points.TopLeftLongitude) // 经度最小值
-  const ke3 =  Math.min(points.BottomLeftLatitude, points.BottomRightLatitude) // 纬度最小值
-  const ke4 = Math.max(points.BottomRightLongitude, points.TopRightLongitude) // 经度最大值
-
+// 添加真实四边形边界框
+const addPolygon = (points, imageUrl, id, data) => {
   const latlngs = [
-    [ke1,ke2],
-    [ke1,ke4],
-    [ke3,ke4],
-    [ke3,ke2],
+    [points.TopLeftLatitude, points.TopLeftLongitude],
+    [points.TopRightLatitude, points.TopRightLongitude],
+    [points.BottomRightLatitude, points.BottomRightLongitude],
+    [points.BottomLeftLatitude, points.BottomLeftLongitude]
   ]
 
-  // 创建多边形，使用主题色和统一的2px边框
+  // 创建多边形，使用红色边框，线宽2px，半透明填充
   const polygon = L.polygon(latlngs, {
-    color: primaryColor,
+    color: '#DC143C',
     weight: 2,
-    fillColor: primaryColor,
-    fillOpacity: 0.18
+    fillColor: '#DC143C',
+    fillOpacity: 0.2,
+    className: 'image-boundary'
   }).addTo(map.value);
   //.setIndex(1);
   polygon.id = id
   polygon.data = data;  //保存详细数据
+  polygonLayers.value.push(polygon);
 
   polygon.on('contextmenu', function (e) {
     emit("getSonValue1", this.data);  //传递多边形对应的详细数据
@@ -417,13 +414,31 @@ const removeAllImage = () => {
 const clearAllLayers = () => {
   if (map.value) {
     map.value.pm.disableDraw();
-    map.value.eachLayer((layer) => {
-      if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-        map.value.removeLayer(layer);
-      }
+    polygonLayers.value.forEach(layer => {
+      map.value.removeLayer(layer);
     });
+    polygonLayers.value = [];
     drawnPolygon.value = null;
   }
+};
+
+// 批量绘制影像边界框
+const drawImageBoundaries = (imageList) => {
+  clearAllLayers();
+  
+  imageList.forEach(item => {
+    const points = {
+      TopLeftLatitude: item.leftupLatitude,
+      TopLeftLongitude: item.leftupLongitude,
+      TopRightLatitude: item.rightupLatitude,
+      TopRightLongitude: item.rightupLongitude,
+      BottomRightLatitude: item.rightdownLatitude,
+      BottomRightLongitude: item.rightdownLongitude,
+      BottomLeftLatitude: item.leftdownLatitude,
+      BottomLeftLongitude: item.leftdownLongitude
+    };
+    addPolygon(points, item.image, item.id, item);
+  });
 };
 
 // 改变多边形框颜色
@@ -449,12 +464,13 @@ defineExpose({
   clearAllLayers,
   getDrawnPolygon,
   goToLatLng,
-  addRotatedImageWithPolygon, // 修改为新的方法名
+  addRotatedImageWithPolygon,
   addPolygon,
   removeImage,
   changePolygonColor,
   removeAllImage,
-  resizeMap
+  resizeMap,
+  drawImageBoundaries
 });
 
 onMounted(() => {

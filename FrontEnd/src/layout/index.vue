@@ -17,6 +17,7 @@
 </template>
 
 <script setup>
+import { computed, watch, watchEffect, ref, getCurrentInstance } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import Sidebar from './components/Sidebar/index.vue'
 import { AppMain, Navbar, Settings, TagsView } from './components'
@@ -46,11 +47,19 @@ const WIDTH = 200; // refer to Bootstrap's responsive design
 
 const { proxy } = getCurrentInstance();
 const key = proxy.$router.currentRoute.value.fullPath
-if(key == '/home' || key == '/aiProcess' || key == '/productionShow' || key == '/quickStart'){
+if(key == '/home' || key == '/newHome' || key == '/aiProcess' || key == '/productionShow' || key == '/quickStart'){
   useAppStore().setMenuHide(false);
 } else {
   useAppStore().setMenuHide(true);
 }
+
+watch(() => proxy.$router.currentRoute.value.fullPath, (newPath) => {
+  if(newPath == '/home' || newPath == '/newHome' || newPath == '/aiProcess' || newPath == '/productionShow' || newPath == '/quickStart'){
+    useAppStore().setMenuHide(false);
+  } else {
+    useAppStore().setMenuHide(true);
+  }
+})
 
 watch(() => device.value, () => {
   if (device.value === 'mobile' && sidebar.value.opened) {
